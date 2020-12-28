@@ -3,8 +3,6 @@ import yaml
 import ipaddress
 import pdb
 
-with open("hub-example.yaml", "r") as f:
-    data = yaml.safe_load(f)
 
 with open("model-sdwan.yaml", "r") as f:
     model = yaml.safe_load(f)
@@ -89,7 +87,9 @@ def build_device_models(model):
                     site_id = members[r]["id"]
                     bport = members[r]["interfaces"].get(t["bport"])["name"]
                     eth_id = int(bport.split("/")[1])
-                    tunnel_intf = f"tunnel.{site_id:02d}{eth_id:02d}"
+                    tunnel_number = int(f"{site_id:02d}{eth_id:02d}")
+                    #pdb.set_trace()
+                    tunnel_intf = f"tunnel.{tunnel_number}"
                     ip = str(ipaddress.ip_interface(t["subnet"]) + index).replace("32", "30")
                     monitor_ip = str(ipaddress.ip_interface(t["subnet"]) + (3-index)).replace("/32", "")
                     # get local port by using name "wan1", etc
@@ -127,21 +127,23 @@ def build_device_models(model):
             "router_id": members[m]["router_id"],
             "interfaces": members[m]["interfaces"],
             "remotes": remotes,
+            "profiles": model["profiles"],
         })
+
 
         file_loader = FileSystemLoader("./")
         env = Environment(loader=file_loader)
         template = env.get_template('model-device.j2')
         output = template.render(vars=device_model)
 
-        with open(f"model-{m}.yaml", "w") as f:
+        with open(f"output/model-{m}.yaml", "w") as f:
             f.write(output)
 
 
 def build_config(devices):
 
     for d in devices:
-        with open(f"model-{d}.yaml", "r") as f:
+        with open(f"output/model-{d}.yaml", "r") as f:
             data = yaml.safe_load(f)
 
         file_loader = FileSystemLoader("./")
@@ -149,7 +151,7 @@ def build_config(devices):
         template = env.get_template('pa-set.j2')
         output = template.render(vars=data)
 
-        with open(f"pa-{d}-template-set.txt", "w") as f:
+        with open(f"output/pa-{d}-template-set.txt", "w") as f:
             f.write(output)
 
     return None

@@ -39,3 +39,12 @@ remotes:
         peer_ip: {{ t.peer_ip }}
 {%-  endfor %}
 {%- endfor %}
+profiles:
+{%- for profile, v in vars.profiles.items() %}
+  {{ profile }}:
+    tag: {{ v.tag }}
+    type: {{ v.type }}
+    upload: {{ v.upload }}
+    download: {{ v.download }}
+    tunnel: '{{ v.tunnel }}'
+{%- endfor %}
