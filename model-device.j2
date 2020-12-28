@@ -11,7 +11,7 @@ interfaces:
   {{ k }}:
     name: {{ v.name }}
     address: {{ v.address }}
-{%- if v.sdwan_intf is defined %}
+{%- if v.sdwan_gw is defined %}
     sdwan_gw: {{ v.sdwan_gw }}
     sdwan_profile: {{ v.sdwan_profile}}
 {%- endif %}

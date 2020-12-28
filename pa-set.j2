@@ -12,16 +12,15 @@ set template {{ vars.template }} config network interface ethernet {{ i.name }} 
 {%  endif %}
 set template {{ vars.template }} config network interface ethernet {{ i.name }} layer3 interface-management-profile ping-only
 set template {{ vars.template }} config network interface ethernet {{ i.name }} comment {{ intf }}
-set template {{ vars.template }} config vsys vsys1 import network interface [ {{ intf }} ]
+set template {{ vars.template }} config vsys vsys1 import network interface [ {{ i.name }} ]
 set template {{ vars.template }} config vsys vsys1 zone {{ i.zone }} network layer3 {{ i.name }}
 {% endfor %}
 set template {{ vars.template }} config network interface loopback units loopback.1 ip {{ vars.loopback }}/32
 set template {{ vars.template }} config network interface loopback units loopback.1 interface-management-profile ping-only
 set template {{ vars.template }} config vsys vsys1 zone zone-internal network layer3 loopback.1
 
-
 {% for branch, b in vars.remotes.items() %}
-{%  for tunnel, t in b.tunnels.items() %}
+{%-  for tunnel, t in b.tunnels.items() %}
 set template {{ vars.template }} config network ike gateway {{ tunnel }} authentication pre-shared-key key -AQ==zPJb3ngM1sGjXlfX2+Qk6rbdv1I=ucInIpBmFcnkQK7zF4VO1w==
 set template {{ vars.template }} config network ike gateway {{ tunnel }} protocol version ikev2
 set template {{ vars.template }} config network ike gateway {{ tunnel }} local-address interface {{ t.local_intf }} ip {{ t.local_ip }}
@@ -38,9 +37,9 @@ set template {{ vars.template }} config network tunnel ipsec {{ tunnel }} tunnel
 set template {{ vars.template }} config network tunnel ipsec {{ tunnel }} tunnel-monitor enable yes
 {%  endfor %}
 set template {{ vars.template }} config network virtual-router default routing-table ip static-route {{ branch }}_loopback destination {{ b.loopback }} interface sdwan.{{ b.sdwan_intf}}
-{%  for w, nh in b.remote_wans.items() %}
+{%-  for w, nh in b.remote_wans.items() %}
 set template {{ vars.template }} config network virtual-router default routing-table ip static-route {{ branch }}_wan destination {{ w }} interface {{ nh.intf }} nexthop ip-address {{ nh.gw }}
-{%  endfor %}
+{%-  endfor %}
 {% endfor %}
 
 set template {{ vars.template }} config  network virtual-router default protocol redist-profile connected filter type connect
@@ -48,12 +47,12 @@ set template {{ vars.template }} config  network virtual-router default protocol
 set template {{ vars.template }} config  network virtual-router default protocol redist-profile connected action redist 
 set template {{ vars.template }} config  network virtual-router default protocol bgp enable yes
 set template {{ vars.template }} config  network virtual-router default protocol bgp install-route yes
-{% for branch, b in vars.remotes.items() %}
+{%- for branch, b in vars.remotes.items() %}
 set template {{ vars.template }} config  network virtual-router default protocol bgp peer-group {{ branch }}_pg peer {{ branch }} peer-address ip {{ b.loopback }} 
 set template {{ vars.template }} config  network virtual-router default protocol bgp peer-group {{ branch }}_pg peer {{ branch }} local-address ip {{ vars.loopback }}/32
 set template {{ vars.template }} config  network virtual-router default protocol bgp peer-group {{ branch }}_pg peer {{ branch }} local-address interface loopback.1
 set template {{ vars.template }} config  network virtual-router default protocol bgp peer-group {{ branch }}_pg peer {{ branch }} peer-as {{ 65000 + b.sdwan_intf - 100 }}
-{% endfor %}
+{%- endfor %}
 set template {{ vars.template }} config  network virtual-router default protocol bgp redist-rules connected enable yes
 set template {{ vars.template }} config  network virtual-router default protocol bgp router-id {{ vars.loopback }}
 set template {{ vars.template }} config  network virtual-router default protocol bgp local-as {{ vars.asn }}

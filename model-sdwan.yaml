@@ -1,8 +1,8 @@
 members:
-  palo-hub:
+  hub1:
     role: hub
     id: 1
-    template: sdwan-hub
+    template: hub1
     pskhash: 
     router_id: 192.168.180.1
     interfaces:
@@ -22,10 +22,10 @@ members:
       lan1:
         name: ethernet1/4
         address: 192.168.80.1/24
-  palo-2:
+  palo2:
     role: branch
     id: 2
-    template: palo-2
+    template: palo2
     pskhash: 
     router_id: 192.168.182.1
     interfaces:
@@ -45,10 +45,10 @@ members:
       lan1:
         name: ethernet1/4
         address: 192.168.82.1/24
-  palo-5:
+  palo5:
     role: branch
     id: 5
-    template: palo-5
+    template: palo5
     pskhash: 
     router_id: 192.168.185.1
     interfaces:

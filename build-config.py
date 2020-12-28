@@ -34,6 +34,8 @@ def build_device_models(model):
                     "sdwan_profile": "Internet",
                     "zone": "zone-internet"
                 })
+            elif "lan" in k:
+                continue
             else:
                 print(f"Unsupported interface name {k} found. Exiting.")
 
