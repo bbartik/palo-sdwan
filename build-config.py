@@ -1,6 +1,10 @@
 from jinja2 import FileSystemLoader, Environment
 import yaml
 import ipaddress
+import glob
+from netmiko import ConnectHandler
+from getpass import getpass
+
 import pdb
 
 
@@ -121,6 +125,7 @@ def build_device_models(model):
         device_model = {}
         device_model.update({
             "name": m,
+            "sn": members[m]["sn"],
             "id": members[m]["id"],
             "role": members[m]["role"],
             "template": m,
@@ -157,8 +162,40 @@ def build_config(devices):
     return None
 
 
+def push_config():
+
+    host = input("Enter your hostname: ")
+    password = getpass("Enter password: ")
+
+    device = { 
+        "device_type": "paloalto_panos",
+        "host": host,
+        "username": "admin",
+        "password": "password",
+        "verbose": True,
+        "session_log": "output.txt",
+    } 
+
+    net_connect = ConnectHandler(**device)
+    output = net_connect.send_command("show admins")
+    print(output)
+
+    set_files = glob.glob('./output/*.txt')
+
+    for sf in set_files:
+        with open(sf, "r") as f:
+            cmds = f.readlines()
+            
+        output = net_connect.send_config_set(cmds)
+
+    #pdb.set_trace()
+
 if __name__ == "__main__":
 
     build_device_models(model)
     devices = [ k for k, v in model["members"].items()]
     build_config(devices)
+
+    answer = input("Push config to Panorama? [y/n] ")
+    if answer == "y":
+        push_config()

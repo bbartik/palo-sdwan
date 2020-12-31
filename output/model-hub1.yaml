@@ -1,6 +1,7 @@
 
 ---
 name: hub1
+sn: 007251000151812
 id: 1
 role: hub
 template: hub1
@@ -21,8 +22,8 @@ interfaces:
     zone: zone-to-branch
   isp1:
     name: ethernet1/3
-    address: 192.168.50.2/24
-    sdwan_gw: 192.168.50.1
+    address: 162.168.50.2/24
+    sdwan_gw: 162.168.50.1
     sdwan_profile: Internet
     zone: zone-internet
   lan1:
@@ -57,8 +58,8 @@ remotes:
         ip: 192.168.123.1/30
         monitor_ip: 192.168.123.2
         local_intf: ethernet1/3
-        local_ip: 192.168.50.2/24
-        peer_ip: 192.168.52.2
+        local_ip: 162.168.50.2/24
+        peer_ip: 162.168.52.2
   palo5:
     sdwan_intf: 105
     loopback: 192.168.185.1
@@ -86,8 +87,8 @@ remotes:
         ip: 192.168.153.1/30
         monitor_ip: 192.168.153.2
         local_intf: ethernet1/3
-        local_ip: 192.168.50.2/24
-        peer_ip: 192.168.55.2
+        local_ip: 162.168.50.2/24
+        peer_ip: 162.168.55.2
 profiles:
   MPLS:
     tag: MPLS

@@ -1,6 +1,12 @@
 
+set template {{ vars.template }} config vsys vsys1
 set template {{ vars.template }} settings default-vsys vsys1
-{%- for profile, v in vars.profiles.items()%}
+set template {{ vars.template }} description "Generated from https://github.com/bbartik/palo-sdwan"
+set template-stack {{ vars.template }}_stack description "Generated from https://github.com/bbartik/palo-sdwan"
+set template-stack {{ vars.template }}_stack templates {{ vars.template }}
+set template-stack {{ vars.template }}_stack templates global_settings
+set template-stack {{ vars.template }}_stack devices {{ vars.sn }}
+{% for profile, v in vars.profiles.items()%}
 set template {{ vars.template }} config vsys vsys1 sdwan-interface-profile {{ profile }} link-tag {{ v.tag }}
 set template {{ vars.template }} config vsys vsys1 sdwan-interface-profile {{ profile }} link-type {{ v.type }}
 set template {{ vars.template }} config vsys vsys1 sdwan-interface-profile {{ profile }} maximum-download {{ v.download }}
@@ -65,22 +71,25 @@ set template {{ vars.template }} config network virtual-router default routing-t
 {%-  endfor %}
 {% endfor %}
 
-set template {{ vars.template }} config  network virtual-router default protocol redist-profile connected filter type connect
-set template {{ vars.template }} config  network virtual-router default protocol redist-profile connected priority 1
-set template {{ vars.template }} config  network virtual-router default protocol redist-profile connected action redist 
-set template {{ vars.template }} config  network virtual-router default protocol bgp router-id {{ vars.loopback }}
-set template {{ vars.template }} config  network virtual-router default protocol bgp local-as {{ vars.asn }}
-set template {{ vars.template }} config  network virtual-router default protocol bgp enable yes
-set template {{ vars.template }} config  network virtual-router default protocol bgp install-route yes
+set template {{ vars.template }} config network virtual-router default protocol redist-profile connected filter type connect
+set template {{ vars.template }} config network virtual-router default protocol redist-profile connected priority 1
+set template {{ vars.template }} config network virtual-router default protocol redist-profile connected action redist 
+set template {{ vars.template }} config network virtual-router default protocol bgp router-id {{ vars.loopback }}
+set template {{ vars.template }} config network virtual-router default protocol bgp local-as {{ vars.asn }}
+set template {{ vars.template }} config network virtual-router default protocol bgp enable yes
+set template {{ vars.template }} config network virtual-router default protocol bgp install-route yes
 {%- for branch, b in vars.remotes.items() %}
-set template {{ vars.template }} config  network virtual-router default protocol bgp peer-group {{ branch }}_pg peer {{ branch }} peer-address ip {{ b.loopback }} 
-set template {{ vars.template }} config  network virtual-router default protocol bgp peer-group {{ branch }}_pg peer {{ branch }} local-address ip {{ vars.loopback }}/32
-set template {{ vars.template }} config  network virtual-router default protocol bgp peer-group {{ branch }}_pg peer {{ branch }} local-address interface loopback.1
-set template {{ vars.template }} config  network virtual-router default protocol bgp peer-group {{ branch }}_pg peer {{ branch }} peer-as {{ 65000 + b.sdwan_intf - 100 }}
+set template {{ vars.template }} config network virtual-router default protocol bgp peer-group {{ branch }}_pg peer {{ branch }} peer-address ip {{ b.loopback }} 
+set template {{ vars.template }} config network virtual-router default protocol bgp peer-group {{ branch }}_pg peer {{ branch }} local-address ip {{ vars.loopback }}/32
+set template {{ vars.template }} config network virtual-router default protocol bgp peer-group {{ branch }}_pg peer {{ branch }} local-address interface loopback.1
+set template {{ vars.template }} config network virtual-router default protocol bgp peer-group {{ branch }}_pg peer {{ branch }} peer-as {{ 65000 + b.sdwan_intf - 100 }}
 {%- endfor %}
-set template {{ vars.template }} config  network virtual-router default protocol bgp redist-rules connected enable yes
-set template {{ vars.template }} config  network virtual-router default protocol bgp policy aggregation address corp_summary prefix {{ prefix|default("192.168.0.0/16") }} 
-set template {{ vars.template }} config  network virtual-router default protocol bgp policy aggregation address corp_summary summary yes
-
-
-
+set template {{ vars.template }} config network virtual-router default protocol bgp redist-rules connected enable yes
+set template {{ vars.template }} config network virtual-router default protocol bgp policy aggregation address corp_summary prefix {{ prefix|default("192.168.0.0/16") }} 
+set template {{ vars.template }} config network virtual-router default protocol bgp policy aggregation address corp_summary summary yes
+set template {{ vars.template }} config network virtual-router default protocol bgp redist-rules connected address-family-identifier ipv4
+{%- for intf, i in vars.interfaces.items()%}
+{%- if "isp" in intf %}
+set template {{ vars.template }} config network virtual-router default routing-table ip static-route default_{{ intf.split("isp")[1] }} destination 0.0.0.0/0 interface {{ i.name }} nexthop ip-address {{ i.sdwan_gw }}
+{%- endif %}
+{%- endfor %}

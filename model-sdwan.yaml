@@ -1,5 +1,6 @@
 members:
   hub1:
+    sn: 007251000151812
     role: hub
     id: 1
     template: hub1
@@ -17,12 +18,13 @@ members:
         l3: True
       isp1:
         name: ethernet1/3
-        address: 192.168.50.2/24
-        sdwan_gw: 192.168.50.1
+        address: 162.168.50.2/24
+        sdwan_gw: 162.168.50.1
       lan1:
         name: ethernet1/4
         address: 192.168.80.1/24
   palo2:
+    sn: 007251000151822
     role: branch
     id: 2
     template: palo2
@@ -40,12 +42,13 @@ members:
         l3: True
       isp1:
         name: ethernet1/3
-        address: 192.168.52.2/24
-        sdwan_gw: 192.168.52.1
+        address: 162.168.52.2/24
+        sdwan_gw: 162.168.52.1
       lan1:
         name: ethernet1/4
         address: 192.168.82.1/24
   palo5:
+    sn: 007251000151821
     role: branch
     id: 5
     template: palo5
@@ -63,8 +66,8 @@ members:
         l3: True
       isp1:
         name: ethernet1/3
-        address: 192.168.55.2/24
-        sdwan_gw: 192.168.55.1
+        address: 162.168.55.2/24
+        sdwan_gw: 162.168.55.1
       lan1:
         name: ethernet1/4
         address: 192.168.85.1/24

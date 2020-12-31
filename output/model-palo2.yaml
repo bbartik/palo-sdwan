@@ -1,6 +1,7 @@
 
 ---
 name: palo2
+sn: 007251000151822
 id: 2
 role: branch
 template: palo2
@@ -21,8 +22,8 @@ interfaces:
     zone: zone-to-branch
   isp1:
     name: ethernet1/3
-    address: 192.168.52.2/24
-    sdwan_gw: 192.168.52.1
+    address: 162.168.52.2/24
+    sdwan_gw: 162.168.52.1
     sdwan_profile: Internet
     zone: zone-internet
   lan1:
@@ -57,8 +58,8 @@ remotes:
         ip: 192.168.123.2/30
         monitor_ip: 192.168.123.1
         local_intf: ethernet1/3
-        local_ip: 192.168.52.2/24
-        peer_ip: 192.168.50.2
+        local_ip: 162.168.52.2/24
+        peer_ip: 162.168.50.2
 profiles:
   MPLS:
     tag: MPLS
