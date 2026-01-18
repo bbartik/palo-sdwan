@@ -1,93 +1,99 @@
+# Output target: "panorama" or "standalone"
+# panorama: generates panorama-set.txt with all device configs
+# standalone: generates individual files (hub1.txt, palo2.txt, etc.)
+target: standalone
+
+# GNS3 lab configuration (used by gns3_lab.py)
+gns3:
+  server: 172.20.16.48
+  port: 3080
+  project_name: bb-palo-sdwan-lab
+  mgmt_cloud_interface: bond0.1167
+  templates:
+    paloalto: "PA-VM 11.1.13"
+    c8000v: "Cisco Router [8000v]"
+    switch: "Ethernet switch"
+    cloud: "Cloud"
+
 members:
   hub1:
-    sn: 007251000151812
+    sn: 007954000762049
     role: hub
     id: 1
     template: hub1
     pskhash: 
-    router_id: 192.168.180.1
+    router_id: 10.1.100.1
     interfaces:
-      wan1:
-        name: ethernet1/1
-        address: 192.168.20.100/24
-        sdwan_gw: 192.168.20.2
-      wan2:
-        name: ethernet1/2
-        address: 192.168.30.2/24
-        sdwan_gw: 192.168.30.1
-        l3: True
       isp1:
-        name: ethernet1/3
-        address: 162.168.50.2/24
-        sdwan_gw: 162.168.50.1
+        name: ethernet1/1
+        address: 192.168.11.2/24
+        sdwan_gw: 192.168.11.1
+      isp2:
+        name: ethernet1/2
+        address: 192.168.21.2/24
+        sdwan_gw: 192.168.21.1
+        l3: True
       lan1:
         name: ethernet1/4
-        address: 192.168.80.1/24
+        address: 10.1.10.1/24
   palo2:
     sn: 007251000151822
     role: branch
     id: 2
     template: palo2
     pskhash: 
-    router_id: 192.168.182.1
+    router_id: 10.2.100.1
     interfaces:
-      wan1:
-        name: ethernet1/1
-        address: 192.168.20.2/24
-        sdwan_gw: 192.168.20.100
-      wan2:
-        name: ethernet1/2
-        address: 192.168.32.2/24
-        sdwan_gw: 192.168.32.1
-        l3: True
       isp1:
-        name: ethernet1/3
-        address: 162.168.52.2/24
-        sdwan_gw: 162.168.52.1
+        name: ethernet1/1
+        address: 192.168.12.2/24
+        sdwan_gw: 192.168.12.1
+      isp2:
+        name: ethernet1/2
+        address: 192.168.22.2/24
+        sdwan_gw: 192.168.22.1
+        l3: True
       lan1:
         name: ethernet1/4
-        address: 192.168.82.1/24
+        address: 10.2.10.1/24
   palo5:
     sn: 007251000151821
     role: branch
     id: 5
     template: palo5
     pskhash: 
-    router_id: 192.168.185.1
+    router_id: 10.5.100.1
     interfaces:
-      wan1:
-        name: ethernet1/1
-        address: 192.168.20.5/24
-        sdwan_gw: 192.168.20.100
-      wan2:
-        name: ethernet1/2
-        address: 192.168.35.2/24
-        sdwan_gw: 192.168.35.1
-        l3: True
       isp1:
-        name: ethernet1/3
-        address: 162.168.55.2/24
-        sdwan_gw: 162.168.55.1
+        name: ethernet1/1
+        address: 192.168.15.2/24
+        sdwan_gw: 192.168.15.1
+      isp2:
+        name: ethernet1/2
+        address: 192.168.25.2/24
+        sdwan_gw: 192.168.25.1
+        l3: True
       lan1:
         name: ethernet1/4
-        address: 192.168.85.1/24
+        address: 10.5.10.1/24
 tunnels:
-  - { branch: palo2, hub: hub1, bport: wan1, hport: wan1, subnet: 192.168.121.0/30 }
-  - { branch: palo2, hub: hub1, bport: wan2, hport: wan2, subnet: 192.168.122.0/30 }
-  - { branch: palo2, hub: hub1, bport: isp1, hport: isp1, subnet: 192.168.123.0/30 }
-  - { branch: palo5, hub: hub1, bport: wan1, hport: wan1, subnet: 192.168.151.0/30 }
-  - { branch: palo5, hub: hub1, bport: wan2, hport: wan2, subnet: 192.168.152.0/30 }
-  - { branch: palo5, hub: hub1, bport: isp1, hport: isp1, subnet: 192.168.153.0/30 }
+  pool: 100.64.0.0/16
 
 profiles:
-  MPLS:
-    tag: MPLS
-    type: MPLS
-    upload: 20
-    download: 20
+  # MPLS:
+  #   tag: MPLS
+  #   type: MPLS
+  #   upload: 20
+  #   download: 20
+  #   tunnel: 'yes'
+  ISP1:
+    tag: isp1
+    type: Ethernet
+    upload: 100
+    download: 100
     tunnel: 'yes'
-  Internet:
-    tag: Internet
+  ISP2:
+    tag: isp2
     type: Ethernet
     upload: 100
     download: 100

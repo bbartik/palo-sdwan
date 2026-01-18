@@ -1,3 +1,6 @@
 .venv
-.vscode
-.output.txt
+venv/
+.vscode/
+.claude/
+output/
+output.txt
